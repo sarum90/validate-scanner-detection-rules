@@ -55,8 +55,22 @@ async function run() {
           if (match) {
             const [, filePath, errorMsg] = match;
             const relativePath = path.relative(process.cwd(), filePath);
+            
+            // Try to extract line and column numbers from error message
+            const lineMatches = errorMsg.match(/line: (\d+)/g);
+            const columnMatches = errorMsg.match(/column: (\d+)/g);
+            
+            const lineNumber = (lineMatches?.length === 1) 
+              ? parseInt(lineMatches[0].replace('line: ', '')) 
+              : undefined;
+            const columnNumber = (columnMatches?.length === 1) 
+              ? parseInt(columnMatches[0].replace('column: ', '')) 
+              : undefined;
+            
             core.error(errorMsg, {
-              file: relativePath
+              file: relativePath,
+              startLine: lineNumber,
+              startColumn: columnNumber
             });
           }
         }
