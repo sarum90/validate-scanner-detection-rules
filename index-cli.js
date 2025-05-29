@@ -29,25 +29,27 @@ async function run() {
       return;
     }
 
-    let hasErrors = false;
+    // Build command with all files
+    const fileArgs = yamlFiles.map(file => `-f "${file}"`).join(' ');
+    const command = `scanner-cli validate ${fileArgs}`;
 
-    for (const filePath of yamlFiles) {
-      try {
-        const relativePath = path.relative(process.cwd(), filePath);
-        
-        // Run scanner-cli validate command
-        const result = execSync(`scanner-cli validate -f "${filePath}"`, {
-          encoding: 'utf8'
-        });
-        
-        core.info(`✅ ${relativePath} is valid`);
-        
-      } catch (error) {
-        hasErrors = true;
-        const relativePath = path.relative(process.cwd(), filePath);
-        const errorOutput = error.stdout || error.stderr || error.message;
-        core.setFailed(`❌ ${relativePath} is invalid: ${errorOutput}`);
+    try {
+      const result = execSync(command, {
+        encoding: 'utf8'
+      });
+      
+      // If we get here, all files are valid
+      core.info(result);
+      
+    } catch (error) {
+      // Show both stdout and stderr which contain useful validation info
+      if (error.stdout) {
+        core.info(error.stdout);
       }
+      if (error.stderr) {
+        core.error(error.stderr);
+      }
+      core.setFailed('One or more detection rules failed validation');
     }
 
   } catch (error) {
