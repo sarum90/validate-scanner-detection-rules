@@ -1,4 +1,4 @@
-name: Test Detection Rule Validator
+name: Test Detection Rule Validator using files
 
 on:
   push:
@@ -18,4 +18,4 @@ jobs:
         with:
           scanner_api_url: '${{ secrets.SCANNER_API_URL }}'
           scanner_api_key: '${{ secrets.SCANNER_API_KEY }}'
-          file_pattern: 'tests/**/*.yml'
+          file: tests/test1.yml,tests/test10.yml

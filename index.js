@@ -1,36 +1,49 @@
 const core = require('@actions/core');
 const { execSync } = require('child_process');
-const glob = require('@actions/glob');
 const path = require('path');
 
 async function run() {
   try {
-    const scannerApiUrl = core.getInput('scanner_api_url', { required: true });
-    const scannerApiKey = core.getInput('scanner_api_key', { required: true });
-    const filePattern = core.getInput('file_pattern') || '**/*.yml';
+    const apiUrl = core.getInput('scanner_api_url', { required: true });
+    const apiKey = core.getInput('scanner_api_key', { required: true });
+    const fileInput = core.getInput('file');
+    const dirInput = core.getInput('dir');
+    const recursive = core.getInput('recursive') === 'true';
 
     // Set environment variables for scanner-cli
-    process.env.SCANNER_API_URL = scannerApiUrl;
-    process.env.SCANNER_API_KEY = scannerApiKey;
+    process.env.SCANNER_API_URL = apiUrl;
+    process.env.SCANNER_API_KEY = apiKey;
 
-    core.info(`Scanning for YAML files with pattern: ${filePattern}`);
-
-    const globber = await glob.create(filePattern, {
-      followSymbolicLinks: false,
-      implicitDescendants: true,
-      omitBrokenSymbolicLinks: true
-    });
-
-    const yamlFiles = await globber.glob();
+    // Build scanner-cli command
+    let command = 'scanner-cli validate';
     
-    if (yamlFiles.length === 0) {
-      core.warning('No YAML files found. Check the file_pattern and ensure YAML files exist in the repository.');
-      return;
+    // Add file arguments
+    if (fileInput) {
+      const files = fileInput.split(',').map(f => f.trim());
+      for (const file of files) {
+        command += ` -f "${file}"`;
+      }
+    }
+    
+    // Add directory arguments
+    if (dirInput) {
+      const dirs = dirInput.split(',').map(d => d.trim());
+      for (const dir of dirs) {
+        command += ` -d "${dir}"`;
+      }
+    }
+    
+    // Add recursive flag
+    if (recursive && dirInput) {
+      command += ' -r';
+    }
+    
+    // Default to current directory if no files or dirs specified
+    if (!fileInput && !dirInput) {
+      command += ' -d . -r';
     }
 
-    // Build command with all files
-    const fileArgs = yamlFiles.map(file => `-f "${file}"`).join(' ');
-    const command = `scanner-cli validate ${fileArgs}`;
+    core.info(`Running: ${command}`);
 
     try {
       const result = execSync(command, {

@@ -17,16 +17,21 @@ jobs:
         with:
           scanner_api_url: '${{ secrets.SCANNER_API_URL }}'
           scanner_api_key: '${{ secrets.SCANNER_API_KEY }}'
-          file_pattern: '**/*.yml'
+          dir: '.'
+          recursive: true
 ```
 
 ## Inputs
 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
-| `scanner_api_url` | Scanner.dev API URL | Yes | - |
-| `scanner_api_key` | Scanner.dev API key | Yes | - |
-| `file_pattern` | File pattern to match YAML detection rule files | No | `**/*.yml` |
+| `scanner_api_url` | The API URL of your Scanner instance | Yes | - |
+| `scanner_api_key` | Scanner API key | Yes | - |
+| `file` | Detection rule file(s) - comma separated list | No | - |
+| `dir` | Directory of detection rule files | No | - |
+| `recursive` | Recursively search directory for valid YAML files | No | `true` |
+
+If neither `file` nor `dir` is specified, the action will recursively scan the current directory (`.`).
 
 See the [Scanner.dev CLI documentation](https://docs.scanner.dev/scanner/using-scanner/beta-features/detection-rules-as-code/cli) for details on obtaining your API URL and key.
 
