@@ -30029,6 +30029,8 @@ async function run() {
     
     yamlFiles.forEach(file => core.info(`Found file: ${file}`));
 
+    let hasValidationErrors = false;
+
     for (const filePath of yamlFiles) {
       try {
         const content = await fs.readFile(filePath, 'utf8');
@@ -30063,6 +30065,7 @@ async function run() {
               core.warning(`Warning for ${relativePath}: ${responseBody.warning}`);
             }
           } else {
+            hasValidationErrors = true;
             core.error(`❌ ${relativePath} is invalid: ${responseBody.error}`);
             if (responseBody.warning) {
               core.warning(`Warning for ${relativePath}: ${responseBody.warning}`);
@@ -30076,6 +30079,10 @@ async function run() {
     }
 
     core.info(`Completed processing ${yamlFiles.length} YAML files`);
+
+    if (hasValidationErrors) {
+      core.setFailed('One or more YAML files failed validation');
+    }
 
   } catch (error) {
     core.setFailed(`Action failed: ${error.message}`);

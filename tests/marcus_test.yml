@@ -3,7 +3,7 @@ name: Marcus first test
 description: |-
   Quick running query 
 enabled: true
-severity: Low
+severity: Lower
 query_text: |-
   %ingest.source_type="aws:cloudtrail"
   | count
