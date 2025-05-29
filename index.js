@@ -67,6 +67,12 @@ async function run() {
           const match = line.match(/^(.+?): (.+)$/);
           if (match) {
             const [, filePath, errorMsg] = match;
+            
+            // Skip "OK" messages - these are success cases
+            if (errorMsg.trim() === 'OK') {
+              continue;
+            }
+            
             const relativePath = path.relative(process.cwd(), filePath);
             
             // Try to extract line and column numbers from error message
