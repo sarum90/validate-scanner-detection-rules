@@ -30056,7 +30056,9 @@ async function run() {
           if (match) {
             const [, filePath, errorMsg] = match;
             const relativePath = path.relative(process.cwd(), filePath);
-            core.error(`${relativePath}: ${errorMsg}`);
+            core.error(errorMsg, {
+              file: relativePath
+            });
           }
         }
       }
