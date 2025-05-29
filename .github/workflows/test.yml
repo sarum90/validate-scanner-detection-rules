@@ -26,4 +26,4 @@ jobs:
         with:
           endpoint_url: '${{ secrets.SCANNER_API_BASE }}/v1/detection_rule_yaml/validate'
           auth_header: 'Bearer ${{ secrets.SCANNER_API_TOKEN }}'
-          file_pattern: 'tests/**/*.{yml,yaml}'
+          file_pattern: 'tests/**/*.yml'
