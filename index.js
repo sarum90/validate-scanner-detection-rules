@@ -12,8 +12,6 @@ async function run() {
     const endpointUrl = `${scannerApiBase}/v1/detection_rule_yaml/validate`;
 
     core.info(`Scanning for YAML files with pattern: ${filePattern}`);
-    core.info(`Endpoint URL: ${endpointUrl}`);
-    core.info(`Working directory: ${process.cwd()}`);
 
     const globber = await glob.create(filePattern, {
       followSymbolicLinks: false,
@@ -26,9 +24,8 @@ async function run() {
     
     if (yamlFiles.length === 0) {
       core.warning('No YAML files found. Check the file_pattern and ensure YAML files exist in the repository.');
+      return;
     }
-    
-    yamlFiles.forEach(file => core.info(`Found file: ${file}`));
 
     for (const filePath of yamlFiles) {
       try {
@@ -41,7 +38,6 @@ async function run() {
           'Authorization': `Bearer ${scannerApiKey}`
         };
 
-        core.info(`Validating detection rule: ${relativePath}`);
         
         const response = await fetch(endpointUrl, {
           method: 'POST',
@@ -73,7 +69,6 @@ async function run() {
       }
     }
 
-    core.info(`Completed processing ${yamlFiles.length} YAML files`);
 
   } catch (error) {
     core.setFailed(`Action failed: ${error.message}`);
