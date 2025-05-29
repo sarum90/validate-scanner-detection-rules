@@ -30068,7 +30068,7 @@ async function run() {
               ? parseInt(columnMatches[0].replace('column: ', '')) 
               : undefined;
             
-            core.error(errorMsg, {
+            core.error(`${relativePath}: ${errorMsg}`, {
               file: relativePath,
               startLine: lineNumber,
               startColumn: columnNumber
