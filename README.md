@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: sarum90/validate-scanner-detection-rules@v0.1
+      - uses: sarum90/validate-scanner-detection-rules@v0.2
         with:
           scanner_api_base: '${{ secrets.SCANNER_API_BASE }}'
           scanner_api_key: '${{ secrets.SCANNER_API_KEY }}'
@@ -41,7 +41,7 @@ To prepare a release:
 1. Install dependencies: `npm install`
 2. Build the bundled distribution: `npm run build`
 3. Commit the `dist/` folder: `git add dist && git commit -m "Build dist"`
-4. Tag the release: `git tag v0.1 && git push --tags`
+4. Tag the release: `git tag v0.2 && git push --tags`
 
 The bundled `dist/index.js` contains all dependencies, so users don't need to install anything.
 
