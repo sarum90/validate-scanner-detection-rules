@@ -50,13 +50,23 @@ async function run() {
           body: content
         });
           
-        const responseBody = await response.text();
-        core.info(`posted ${relativePath} ${response.status} ${response.statusText} ${responseBody}`);
-
         if (!response.ok) {
-          core.warning(`Failed to post ${relativePath}: ${response.status} ${response.statusText}`);
+          const responseBody = await response.text();
+          core.error(`Failed to validate ${relativePath}: ${response.status} ${response.statusText} - ${responseBody}`);
         } else {
-          core.info(`Successfully posted ${relativePath}`);
+          const responseBody = await response.json();
+          
+          if (responseBody.is_valid) {
+            core.info(`✅ ${relativePath} is valid`);
+            if (responseBody.warning) {
+              core.warning(`Warning for ${relativePath}: ${responseBody.warning}`);
+            }
+          } else {
+            core.error(`❌ ${relativePath} is invalid: ${responseBody.error}`);
+            if (responseBody.warning) {
+              core.warning(`Warning for ${relativePath}: ${responseBody.warning}`);
+            }
+          }
         }
 
       } catch (error) {
