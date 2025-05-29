@@ -42,14 +42,22 @@ async function run() {
       core.info(result);
       
     } catch (error) {
-      // Show both stdout and stderr which contain useful validation info
+      // Parse stdout to create individual file annotations
       if (error.stdout) {
-        core.info(error.stdout);
+        const lines = error.stdout.split('\n');
+        for (const line of lines) {
+          // Look for lines with format: <filepath>: <error>
+          const match = line.match(/^(.+?): (.+)$/);
+          if (match) {
+            const [, filePath, errorMsg] = match;
+            const relativePath = path.relative(process.cwd(), filePath);
+            core.error(`${relativePath}: ${errorMsg}`);
+          }
+        }
       }
-      if (error.stderr) {
-        core.error(error.stderr);
-      }
-      core.setFailed('One or more detection rules failed validation');
+      
+      // Set overall failure with stderr details
+      core.setFailed(error.stderr || 'Detection rule validation failed');
     }
 
   } catch (error) {
