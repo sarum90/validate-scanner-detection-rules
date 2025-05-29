@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const { execSync } = require('child_process');
 const glob = require('@actions/glob');
+const path = require('path');
 
 async function run() {
   try {
@@ -32,17 +33,20 @@ async function run() {
 
     for (const filePath of yamlFiles) {
       try {
+        const relativePath = path.relative(process.cwd(), filePath);
+        
         // Run scanner-cli validate command
         execSync(`scanner-cli validate -f "${filePath}"`, {
           stdio: ['pipe', 'pipe', 'pipe'],
           encoding: 'utf8'
         });
         
-        core.info(`✅ ${filePath} is valid`);
+        core.info(`✅ ${relativePath} is valid`);
         
       } catch (error) {
         hasErrors = true;
-        core.setFailed(`❌ ${filePath} is invalid: ${error.stderr || error.message}`);
+        const relativePath = path.relative(process.cwd(), filePath);
+        core.setFailed(`❌ ${relativePath} is invalid: ${error.stderr || error.message}`);
       }
     }
 
