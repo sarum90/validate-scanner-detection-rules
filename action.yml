@@ -12,8 +12,18 @@ inputs:
     required: false
     default: '**/*.yml'
 runs:
-  using: 'node20'
-  main: 'dist/index.js'
+  using: 'composite'
+  steps:
+    - name: Install scanner-cli
+      shell: bash
+      run: pip install scanner-cli
+    - name: Run validation
+      shell: bash
+      run: node ${{ github.action_path }}/dist/index.js
+      env:
+        INPUT_SCANNER_API_BASE: ${{ inputs.scanner_api_base }}
+        INPUT_SCANNER_API_KEY: ${{ inputs.scanner_api_key }}
+        INPUT_FILE_PATTERN: ${{ inputs.file_pattern }}
 branding:
   icon: 'file-text'
   color: 'blue'
