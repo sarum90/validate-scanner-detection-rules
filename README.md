@@ -28,6 +28,8 @@ jobs:
 | `scanner_api_key` | Scanner.dev API key | Yes | - |
 | `file_pattern` | File pattern to match YAML detection rule files | No | `**/*.yml` |
 
+See the [Scanner.dev API documentation](https://docs.scanner.dev/scanner/using-scanner/api) for details on obtaining your API base URL and key.
+
 ## API Integration
 
 The action sends the raw YAML content of each detection rule file to the Scanner.dev validation endpoint with `Content-Type: text/yaml` headers.
