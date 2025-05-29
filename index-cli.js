@@ -62,6 +62,7 @@ async function run() {
       
       // Set overall failure with stderr details
       core.setFailed(error.stderr || 'Detection rule validation failed');
+      return; // Exit gracefully, let core.setFailed handle the failure
     }
 
   } catch (error) {
