@@ -11,6 +11,7 @@ async function run() {
 
     core.info(`Scanning for YAML files with pattern: ${filePattern}`);
     core.info(`Endpoint URL: ${endpointUrl}`);
+    core.info(`Working directory: ${process.cwd()}`);
 
     const globber = await glob.create(filePattern, {
       followSymbolicLinks: false,
@@ -20,6 +21,12 @@ async function run() {
 
     const yamlFiles = await globber.glob();
     core.info(`Found ${yamlFiles.length} YAML files`);
+    
+    if (yamlFiles.length === 0) {
+      core.warning('No YAML files found. Check the file_pattern and ensure YAML files exist in the repository.');
+    }
+    
+    yamlFiles.forEach(file => core.info(`Found file: ${file}`));
 
     for (const filePath of yamlFiles) {
       try {
