@@ -32,3 +32,14 @@ jobs:
 
 The action sends the raw YAML content of each detection rule file to the Scanner.dev validation endpoint with `Content-Type: text/yaml` headers.
 
+## Development
+
+To prepare a release:
+
+1. Install dependencies: `npm install`
+2. Build the bundled distribution: `npm run build`
+3. Commit the `dist/` folder: `git add dist && git commit -m "Build dist"`
+4. Tag the release: `git tag v0.1 && git push --tags`
+
+The bundled `dist/index.js` contains all dependencies, so users don't need to install anything.
+

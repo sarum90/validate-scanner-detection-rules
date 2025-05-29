@@ -14,7 +14,7 @@ inputs:
     default: '**/*.{yml,yaml}'
 runs:
   using: 'node20'
-  main: 'index.js'
+  main: 'dist/index.js'
 branding:
   icon: 'file-text'
   color: 'blue'
