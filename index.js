@@ -49,6 +49,9 @@ async function run() {
           headers: headers,
           body: content
         });
+          
+        const responseBody = await response.text();
+        core.info(`posted ${relativePath} ${response.status} ${response.statusText} ${responseBody}`);
 
         if (!response.ok) {
           core.warning(`Failed to post ${relativePath}: ${response.status} ${response.statusText}`);
