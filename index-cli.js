@@ -36,8 +36,7 @@ async function run() {
         const relativePath = path.relative(process.cwd(), filePath);
         
         // Run scanner-cli validate command
-        execSync(`scanner-cli validate -f "${filePath}"`, {
-          stdio: ['pipe', 'pipe', 'pipe'],
+        const result = execSync(`scanner-cli validate -f "${filePath}"`, {
           encoding: 'utf8'
         });
         
@@ -46,7 +45,8 @@ async function run() {
       } catch (error) {
         hasErrors = true;
         const relativePath = path.relative(process.cwd(), filePath);
-        core.setFailed(`❌ ${relativePath} is invalid: ${error.stderr || error.message}`);
+        const errorOutput = error.stdout || error.stderr || error.message;
+        core.setFailed(`❌ ${relativePath} is invalid: ${errorOutput}`);
       }
     }
 
