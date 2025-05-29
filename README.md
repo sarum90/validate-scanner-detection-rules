@@ -1,5 +1,7 @@
 # Detection Rule Validator Action
 
+> **⚠️ Beta Feature**: This action uses scanner-cli, which is currently in beta. See [Scanner.dev Beta Features](https://docs.scanner.dev/scanner/using-scanner/beta-features) for more information.
+
 A GitHub Action that validates detection rules by scanning YAML files in a repository using the scanner-cli tool.
 
 ## Usage
@@ -37,7 +39,7 @@ See the [Scanner.dev CLI documentation](https://docs.scanner.dev/scanner/using-s
 
 ## How it works
 
-The action installs the scanner-cli tool and runs `scanner-cli validate` on all matching YAML files in your repository. It creates individual GitHub annotations for each validation error, pointing to the exact file and line where issues are found.
+The action installs the scanner-cli tool and runs `scanner-cli validate` with the specified files, directories, and options. It creates individual GitHub annotations for each validation error, pointing to the exact file and line where issues are found.
 
 ## Development
 
