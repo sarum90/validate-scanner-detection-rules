@@ -1,0 +1,17 @@
+# schema: https://scanner.dev/schema/scanner-detection-rule.v1.json
+name: Marcus first test
+description: |-
+  Quick running query 
+enabled: true
+severity: Low
+query_text: |-
+  %ingest.source_type="aws:cloudtrail"
+  | count
+  | where @q.count > 100
+time_range_s: 3600
+run_frequency_s: 600
+event_sink_keys:
+- marcus_test_sink_key
+tags:
+- marcus
+- test
