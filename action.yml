@@ -1,17 +1,16 @@
 name: 'YAML File Scanner'
 description: 'Iterates over all files in a repository and posts YAML file contents to an HTTP endpoint'
 inputs:
-  endpoint_url:
-    description: 'HTTP endpoint URL to post YAML contents to'
+  scanner_api_base:
+    description: 'Scanner.dev API base URL'
     required: true
-  auth_header:
-    description: 'Authorization header value (optional)'
-    required: false
-    default: ''
+  scanner_api_key:
+    description: 'Scanner.dev API key'
+    required: true
   file_pattern:
     description: 'File pattern to match YAML files'
     required: false
-    default: '**/*.{yml,yaml}'
+    default: '**/*.yml'
 runs:
   using: 'node20'
   main: 'dist/index.js'

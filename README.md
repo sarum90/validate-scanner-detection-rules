@@ -15,18 +15,18 @@ jobs:
       - uses: actions/checkout@v4
       - uses: sarum90/validate-scanner-detection-rules@v0.1
         with:
-          endpoint_url: '${{ secrets.SCANNER_API_BASE }}/v1/detection_rule_yaml/validate'
-          auth_header: 'Bearer ${{ secrets.SCANNER_API_TOKEN }}'
-          file_pattern: '**/*.{yml,yaml}'
+          scanner_api_base: '${{ secrets.SCANNER_API_BASE }}'
+          scanner_api_key: '${{ secrets.SCANNER_API_KEY }}'
+          file_pattern: '**/*.yml'
 ```
 
 ## Inputs
 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
-| `endpoint_url` | Scanner.dev API endpoint URL for validation | Yes | - |
-| `auth_header` | Authorization header value (Bearer token) | No | '' |
-| `file_pattern` | File pattern to match YAML detection rule files | No | `**/*.{yml,yaml}` |
+| `scanner_api_base` | Scanner.dev API base URL | Yes | - |
+| `scanner_api_key` | Scanner.dev API key | Yes | - |
+| `file_pattern` | File pattern to match YAML detection rule files | No | `**/*.yml` |
 
 ## API Integration
 

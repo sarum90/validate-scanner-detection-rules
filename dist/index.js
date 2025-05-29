@@ -30006,9 +30006,11 @@ const path = __nccwpck_require__(6928);
 
 async function run() {
   try {
-    const endpointUrl = core.getInput('endpoint_url', { required: true });
-    const authHeader = core.getInput('auth_header');
-    const filePattern = core.getInput('file_pattern') || '**/*.{yml,yaml}';
+    const scannerApiBase = core.getInput('scanner_api_base', { required: true });
+    const scannerApiKey = core.getInput('scanner_api_key', { required: true });
+    const filePattern = core.getInput('file_pattern') || '**/*.yml';
+
+    const endpointUrl = `${scannerApiBase}/v1/detection_rule_yaml/validate`;
 
     core.info(`Scanning for YAML files with pattern: ${filePattern}`);
     core.info(`Endpoint URL: ${endpointUrl}`);
@@ -30029,8 +30031,6 @@ async function run() {
     
     yamlFiles.forEach(file => core.info(`Found file: ${file}`));
 
-    let hasValidationErrors = false;
-
     for (const filePath of yamlFiles) {
       try {
         const content = await fs.readFile(filePath, 'utf8');
@@ -30038,12 +30038,9 @@ async function run() {
         
         const headers = {
           'Content-Type': 'text/yaml',
-          'User-Agent': 'GitHub-Action-Detection-Rule-Validator'
+          'User-Agent': 'GitHub-Action-Detection-Rule-Validator',
+          'Authorization': `Bearer ${scannerApiKey}`
         };
-
-        if (authHeader) {
-          headers['Authorization'] = authHeader;
-        }
 
         core.info(`Validating detection rule: ${relativePath}`);
         
@@ -30065,8 +30062,7 @@ async function run() {
               core.warning(`Warning for ${relativePath}: ${responseBody.warning}`);
             }
           } else {
-            hasValidationErrors = true;
-            core.error(`❌ ${relativePath} is invalid: ${responseBody.error}`);
+            core.setFailed(`❌ ${relativePath} is invalid: ${responseBody.error}`);
             if (responseBody.warning) {
               core.warning(`Warning for ${relativePath}: ${responseBody.warning}`);
             }
@@ -30074,15 +30070,11 @@ async function run() {
         }
 
       } catch (error) {
-        core.warning(`Error processing ${filePath}: ${error.message}`);
+        core.setFailed(`Error processing ${filePath}: ${error.message}`);
       }
     }
 
     core.info(`Completed processing ${yamlFiles.length} YAML files`);
-
-    if (hasValidationErrors) {
-      core.setFailed('One or more YAML files failed validation');
-    }
 
   } catch (error) {
     core.setFailed(`Action failed: ${error.message}`);

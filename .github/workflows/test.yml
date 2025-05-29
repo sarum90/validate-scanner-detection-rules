@@ -16,6 +16,6 @@ jobs:
       - name: Test the action
         uses: ./
         with:
-          endpoint_url: '${{ secrets.SCANNER_API_BASE }}/v1/detection_rule_yaml/validate'
-          auth_header: 'Bearer ${{ secrets.SCANNER_API_TOKEN }}'
+          scanner_api_base: '${{ secrets.SCANNER_API_BASE }}'
+          scanner_api_key: '${{ secrets.SCANNER_API_KEY }}'
           file_pattern: 'tests/**/*.yml'
