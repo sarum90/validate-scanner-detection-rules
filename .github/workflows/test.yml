@@ -1,0 +1,21 @@
+name: Test Detection Rule Validator
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Test the action
+        uses: ./
+        with:
+          endpoint_url: '${{ secrets.SCANNER_API_BASE }}/v1/detection_rule_yaml/validate'
+          auth_header: 'Bearer ${{ secrets.SCANNER_API_TOKEN }}'
+          file_pattern: 'tests/**/*.{yml,yaml}'
