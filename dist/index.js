@@ -30006,12 +30006,12 @@ const path = __nccwpck_require__(6928);
 
 async function run() {
   try {
-    const scannerApiBase = core.getInput('scanner_api_base', { required: true });
+    const scannerApiUrl = core.getInput('scanner_api_url', { required: true });
     const scannerApiKey = core.getInput('scanner_api_key', { required: true });
     const filePattern = core.getInput('file_pattern') || '**/*.yml';
 
     // Set environment variables for scanner-cli
-    process.env.SCANNER_API_URL = scannerApiBase;
+    process.env.SCANNER_API_URL = scannerApiUrl;
     process.env.SCANNER_API_KEY = scannerApiKey;
 
     core.info(`Scanning for YAML files with pattern: ${filePattern}`);

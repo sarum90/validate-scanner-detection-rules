@@ -1,6 +1,6 @@
 # Detection Rule Validator Action
 
-A GitHub Action that validates detection rules by scanning YAML files in a repository and submitting them to Scanner.dev's validation API.
+A GitHub Action that validates detection rules by scanning YAML files in a repository using the scanner-cli tool.
 
 ## Usage
 
@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: sarum90/validate-scanner-detection-rules@v0.3
         with:
-          scanner_api_base: '${{ secrets.SCANNER_API_BASE }}'
+          scanner_api_url: '${{ secrets.SCANNER_API_URL }}'
           scanner_api_key: '${{ secrets.SCANNER_API_KEY }}'
           file_pattern: '**/*.yml'
 ```
@@ -24,15 +24,15 @@ jobs:
 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
-| `scanner_api_base` | Scanner.dev API base URL | Yes | - |
+| `scanner_api_url` | Scanner.dev API URL | Yes | - |
 | `scanner_api_key` | Scanner.dev API key | Yes | - |
 | `file_pattern` | File pattern to match YAML detection rule files | No | `**/*.yml` |
 
-See the [Scanner.dev API documentation](https://docs.scanner.dev/scanner/using-scanner/api) for details on obtaining your API base URL and key.
+See the [Scanner.dev CLI documentation](https://docs.scanner.dev/scanner/using-scanner/beta-features/detection-rules-as-code/cli) for details on obtaining your API URL and key.
 
-## API Integration
+## How it works
 
-The action sends the raw YAML content of each detection rule file to the Scanner.dev validation endpoint with `Content-Type: text/yaml` headers.
+The action installs the scanner-cli tool and runs `scanner-cli validate` on all matching YAML files in your repository. It creates individual GitHub annotations for each validation error, pointing to the exact file and line where issues are found.
 
 ## Development
 
