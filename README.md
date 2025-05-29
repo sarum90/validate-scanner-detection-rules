@@ -19,7 +19,7 @@ jobs:
         with:
           scanner_api_url: '${{ secrets.SCANNER_API_URL }}'
           scanner_api_key: '${{ secrets.SCANNER_API_KEY }}'
-          dir: '.'
+          dir: 'rules'
           recursive: true
 ```
 
