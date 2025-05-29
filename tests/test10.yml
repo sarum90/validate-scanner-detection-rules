@@ -3,7 +3,7 @@ name: First test
 description: |-
   Test query
 enabled: true
-severity: Lower
+severity: Low
 query_text: |-
   %ingest.source_type="foo"
   | count
