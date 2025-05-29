@@ -1,6 +1,6 @@
 const core = require('@actions/core');
+const { execSync } = require('child_process');
 const glob = require('@actions/glob');
-const fs = require('fs').promises;
 const path = require('path');
 
 async function run() {
@@ -9,7 +9,9 @@ async function run() {
     const scannerApiKey = core.getInput('scanner_api_key', { required: true });
     const filePattern = core.getInput('file_pattern') || '**/*.yml';
 
-    const endpointUrl = `${scannerApiBase}/v1/detection_rule_yaml/validate`;
+    // Set environment variables for scanner-cli
+    process.env.SCANNER_API_URL = scannerApiBase;
+    process.env.SCANNER_API_KEY = scannerApiKey;
 
     core.info(`Scanning for YAML files with pattern: ${filePattern}`);
 
@@ -20,55 +22,47 @@ async function run() {
     });
 
     const yamlFiles = await globber.glob();
-    core.info(`Found ${yamlFiles.length} YAML files`);
     
     if (yamlFiles.length === 0) {
       core.warning('No YAML files found. Check the file_pattern and ensure YAML files exist in the repository.');
       return;
     }
 
-    for (const filePath of yamlFiles) {
-      try {
-        const content = await fs.readFile(filePath, 'utf8');
-        const relativePath = path.relative(process.cwd(), filePath);
-        
-        const headers = {
-          'Content-Type': 'text/yaml',
-          'User-Agent': 'GitHub-Action-Detection-Rule-Validator',
-          'Authorization': `Bearer ${scannerApiKey}`
-        };
+    // Build command with all files
+    const fileArgs = yamlFiles.map(file => `-f "${file}"`).join(' ');
+    const command = `scanner-cli validate ${fileArgs}`;
 
-        
-        const response = await fetch(endpointUrl, {
-          method: 'POST',
-          headers: headers,
-          body: content
-        });
-          
-        if (!response.ok) {
-          const responseBody = await response.text();
-          core.error(`Failed to validate ${relativePath}: ${response.status} ${response.statusText} - ${responseBody}`);
-        } else {
-          const responseBody = await response.json();
-          
-          if (responseBody.is_valid) {
-            core.info(`✅ ${relativePath} is valid`);
-            if (responseBody.warning) {
-              core.warning(`Warning for ${relativePath}: ${responseBody.warning}`);
-            }
-          } else {
-            core.setFailed(`❌ ${relativePath} is invalid: ${responseBody.error}`);
-            if (responseBody.warning) {
-              core.warning(`Warning for ${relativePath}: ${responseBody.warning}`);
-            }
+    try {
+      const result = execSync(command, {
+        encoding: 'utf8'
+      });
+      
+      // If we get here, all files are valid
+      core.info(result);
+      
+    } catch (error) {
+      // Show full stdout output
+      if (error.stdout) {
+        core.info(error.stdout);
+      }
+      
+      // Parse stdout to create individual file annotations
+      if (error.stdout) {
+        const lines = error.stdout.split('\n');
+        for (const line of lines) {
+          // Look for lines with format: <filepath>: <error>
+          const match = line.match(/^(.+?): (.+)$/);
+          if (match) {
+            const [, filePath, errorMsg] = match;
+            const relativePath = path.relative(process.cwd(), filePath);
+            core.error(`${relativePath}: ${errorMsg}`);
           }
         }
-
-      } catch (error) {
-        core.setFailed(`Error processing ${filePath}: ${error.message}`);
       }
+      
+      // Set overall failure with stderr details
+      core.setFailed(error.stderr || 'Detection rule validation failed');
     }
-
 
   } catch (error) {
     core.setFailed(`Action failed: ${error.message}`);
