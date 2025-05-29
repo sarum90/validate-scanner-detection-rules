@@ -22,7 +22,6 @@ async function run() {
     });
 
     const yamlFiles = await globber.glob();
-    core.info(`Found ${yamlFiles.length} YAML files`);
     
     if (yamlFiles.length === 0) {
       core.warning('No YAML files found. Check the file_pattern and ensure YAML files exist in the repository.');
@@ -42,6 +41,11 @@ async function run() {
       core.info(result);
       
     } catch (error) {
+      // Show full stdout output
+      if (error.stdout) {
+        core.info(error.stdout);
+      }
+      
       // Parse stdout to create individual file annotations
       if (error.stdout) {
         const lines = error.stdout.split('\n');
