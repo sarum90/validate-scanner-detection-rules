@@ -39,7 +39,7 @@ See the [Scanner.dev CLI documentation](https://docs.scanner.dev/scanner/using-s
 
 ## How it works
 
-The action installs the scanner-cli tool and runs `scanner-cli validate` with the specified files, directories, and options. It creates individual GitHub annotations for each validation error, pointing to the exact file and line where issues are found.
+The action installs the [scanner-cli tool](https://docs.scanner.dev/scanner/using-scanner/beta-features/detection-rules-as-code/cli) and runs `scanner-cli validate` with the specified files, directories, and options. It creates individual GitHub annotations for each validation error, pointing to the exact file and line where issues are found.
 
 ## Development
 
