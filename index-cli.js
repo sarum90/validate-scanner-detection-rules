@@ -9,7 +9,7 @@ async function run() {
     const filePattern = core.getInput('file_pattern') || '**/*.yml';
 
     // Set environment variables for scanner-cli
-    process.env.SCANNER_API_BASE = scannerApiBase;
+    process.env.SCANNER_API_URL = scannerApiBase;
     process.env.SCANNER_API_KEY = scannerApiKey;
 
     core.info(`Scanning for YAML files with pattern: ${filePattern}`);
